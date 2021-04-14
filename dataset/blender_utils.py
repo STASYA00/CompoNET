@@ -95,3 +95,12 @@ def select(_volume):
 	_volume.select_set(True)
 	bpy.context.view_layer.objects.active = _volume
 
+
+def deselect_all():
+	"""
+	Function that deselects all the objects in the scene.
+	:return: None
+	"""
+	for obj in bpy.data.objects:
+		obj.select_set(False)
+

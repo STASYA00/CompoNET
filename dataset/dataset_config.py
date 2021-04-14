@@ -2,7 +2,7 @@ MIN_HEIGHT = 3.0
 MIN_WIDTH = 6.0
 MIN_LENGTH = 6.0
 
-MAX_HEIGHT = 30.0
+MAX_HEIGHT = 12.0
 MAX_WIDTH = 30.0
 MAX_LENGTH = 30.0
 
@@ -12,22 +12,36 @@ MAX_VOLUMES = 4
 # Choose building typologies to be produced
 BUILDINGS = ['Patio', 'L', 'C', 'Single', 'Skyscraper', 'Closedpatio', 'Equalpatio']
 
-SIZE = 10  # dataset size
+SIZE = 100  # dataset size
 
 use_materials = True  # apply materials to the facades of the buildings, bool
 
 MATERIAL_PROB = 0.7  # Probability of all the volumes of one building to be of the same material
 
 use_modules = True
-MODULES = ['window']
+MODULES = {'window': {'rule': 'grid',
+                      'materials': ['glass']},  # variant: material
+           'balcony': {'rule': 'column',
+                       'materials': []# if material None - get random from the existing ones, if 0 - as .mtl file
+                       }
+            }  # grid, single, row, column, random
 
 POINTS = 2048  # points to be samples from the mesh to get a point cloud
 # 2048 in ModelNET
+
+RENDER_EXR = True  # change for True if you want an .exr depth map
+
+RENDER_VIEWS = 3
 
 IMAGE_SIZE = (500, 500)
 MODEL_SAVE = 'Models'
 IMG_SAVE = 'Images'
 MASK_SAVE = 'Masks'
 CLOUD_SAVE = 'PointCloud'
+DEPTH_SAVE = 'Depth'
+MODULE_PATH = 'Modules'
+NORMALS_SAVE = 'Normals'
 
 ENGINE = 'CYCLES'
+
+SCRIPT_PATH = "D:\ProgramFiles\Anaconda\envs\py37\Lib\site-packages"

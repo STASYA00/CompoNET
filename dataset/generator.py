@@ -6,9 +6,6 @@ import os
 import random
 import sys
 
-sys.path.append("D:\ProgramFiles\Anaconda\envs\py37\Lib\site-packages")
-from pyntcloud import PyntCloud
-
 file_dir = os.path.dirname(__file__)
 sys.path.append(file_dir)
 
@@ -20,6 +17,9 @@ from point_cloud import PointCloud
 from renderer import Renderer
 from shp2obj import Collection, deselect_all
 from volume import *
+
+sys.path.append(SCRIPT_PATH)
+from pyntcloud import PyntCloud
 
 
 class BuildingFactory:
@@ -82,9 +82,11 @@ class ComposedBuilding:
 
 	def get_bb(self):
 		"""
-		Function that gets the bounding box of the Building
+		Function that gets the bounding box of the Building in blender coordinate
+		space.
 		:return: bounding box, list of float
 		[width_from, height_from, width_to, height_to]
+		# TODO: 3d bounding box
 		"""
 		x_min, y_min, x_max, y_max = list(get_min_max(self.volumes[0].mesh, 0)) + \
 		                             list(get_min_max(self.volumes[0].mesh, 1))
@@ -126,6 +128,9 @@ class ComposedBuilding:
 			bpy.ops.export_mesh.ply(
 				filepath='{}/{}/{}.{}'.format(file_dir, CLOUD_SAVE, filename, ext),
 				use_selection=False)
+			bpy.ops.export_mesh.ply(
+				filepath='{}/{}/{}_p.{}'.format(file_dir, CLOUD_SAVE, filename,
+				                              ext), use_selection=False)
 		else:
 			return NotImplementedError
 
@@ -144,7 +149,7 @@ class LBuilding(ComposedBuilding):
 	def make(self):
 		# add rotation if len > width (or vice versa)
 		self._correct_volumes()
-		gancio(self.volumes[0], self.volumes[1], 0, 0, 0)
+		gancio(self.volumes[0], self.volumes[1], 0, 0, 0) # TODO: Rename or make a separate private funciton
 		return self.volumes
 
 	def _correct_volumes(self):
@@ -310,7 +315,7 @@ class Skyscraper(ComposedBuilding):
 
 	def _correct_volumes(self):
 		for _v in self.volumes:
-			_v.height = np.random.randint(100, 200)
+			_v.height = np.random.randint(50, 100) # 100, 200
 			_v.length = max(30, _v.length)
 			_v.width = max(30, _v.width)
 			_v.create()

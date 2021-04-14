@@ -101,9 +101,30 @@ class Volume:
 		self.height = float(max(MIN_HEIGHT, scale[2]))
 		self.width = float(max(MIN_WIDTH, scale[0]))
 		self.length = float(max(MIN_LENGTH, scale[1]))
+		self.floor = 2.7 + round(np.random.random(), 1)
 		self.position = location
 		self.name = ''
 		self.mesh = None
+
+	def add_modules(self):
+		for side in range(2):
+			if np.random.random() > 0.05:
+				x_step = np.random.randint(2, 6)
+				for module_name in list(MODULES.keys()):
+					if np.random.random() < 0.75:
+						module = ModuleFactory().produce(module_name)
+						module.connect(self, side)
+						try:
+							module.apply()
+						except Exception as e:
+							print(repr(e))
+							pass
+
+						mod = ApplierFactory().produce(module_name)(
+							ModuleFactory().mapping[module_name])
+
+						step = (x_step, self.floor)
+						mod.apply(module, step=step, offset=(2.0, 1.0, 2.0, 1.0))
 
 	def apply(self, material):
 		assert isinstance(material, Material), 'Expected Material object, got ' \
@@ -114,7 +135,6 @@ class Volume:
 		material.value.node_tree.nodes['Mapping'].inputs[3].default_value[2] = self.height * 10 # self.width
 		material.value.node_tree.nodes['Mapping'].inputs[3].default_value /= 2
 		self.mesh.active_material = material.value
-		print(material.value.node_tree.nodes['Mapping'].inputs[3].default_value)
 
 	def create(self):
 		"""
